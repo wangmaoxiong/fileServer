@@ -6,17 +6,25 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * WebMvc 扩展配置类，应用一启动，本类就会执行
+ * @author wangMaoXiong
  * Created by Administrator on 2019/3/17 0017.
+ * <p>
+ * WebMvc 扩展配置类，应用一启动，本类就会执行
  */
 @Configuration
 public class MyWebMvcConfigurer implements WebMvcConfigurer {
 
+    /**
+     * 请求 url 中的资源映射，不推荐写死在代码中，最好提供可配置，如 /uploadFiles/**
+     */
     @Value("${uploadFile.resourceHandler}")
-    private String resourceHandler;//请求 url 中的资源映射，不推荐写死在代码中，最好提供可配置，如 /uploadFiles/**
+    private String resourceHandler;
 
+    /**
+     * 上传文件保存的本地目录，使用@Value获取全局配置文件中配置的属性值，如 E:/wmx/uploadFiles/
+     */
     @Value("${uploadFile.location}")
-    private String location;//上传文件保存的本地目录，使用@Value获取全局配置文件中配置的属性值，如 E:/wmx/uploadFiles/
+    private String location;
 
     /**
      * 配置静态资源映射

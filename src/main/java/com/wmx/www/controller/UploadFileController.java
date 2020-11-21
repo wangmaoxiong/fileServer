@@ -52,10 +52,9 @@ public class UploadFileController {
         System.out.println("文件访问路径：" + fileServerPath);
 
         File saveFile = new File(uploadFileLocation, fileName);
-        multipartFile.transferTo(saveFile);//文件保存
-
+        //文件保存
+        multipartFile.transferTo(saveFile);
         System.out.println("文件保存路径：" + saveFile.getPath());
-
         return "<a href='" + fileServerPath + "'>" + fileServerPath + "</a>";
     }
 }

@@ -11,16 +11,25 @@ import java.io.File;
 import java.io.IOException;
 
 /**
+ * 文件上传控制层
+ *
+ * @author wangMaoXiong
  * Created by Administrator on 2019/3/17 0017.
  */
 @Controller
 public class UploadFileController {
 
+    /**
+     * 请求 url 中的资源映射，不推荐写死在代码中，最好提供可配置，如 /uploadFiles/**
+     */
     @Value("${uploadFile.resourceHandler}")
-    private String resourceHandler;//请求 url 中的资源映射，不推荐写死在代码中，最好提供可配置，如 /uploadFiles/**
+    private String resourceHandler;
 
+    /**
+     * 上传文件保存的本地目录，使用@Value获取全局配置文件中配置的属性值，如 E:/wmx/uploadFiles/
+     */
     @Value("${uploadFile.location}")
-    private String uploadFileLocation;//上传文件保存的本地目录，使用@Value获取全局配置文件中配置的属性值，如 E:/wmx/uploadFiles/
+    private String uploadFileLocation;
 
     /**
      * 文件上传，因为只是演示，所以使用 @ResponseBody 将结果直接返回给页面

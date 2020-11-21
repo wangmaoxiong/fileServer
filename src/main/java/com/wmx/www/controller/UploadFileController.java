@@ -35,20 +35,20 @@ public class UploadFileController {
     /**
      * 文件上传，因为只是演示，所以使用 @ResponseBody 将结果直接返回给页面
      *
-     * @param multipartFile
+     * @param singleFile
      * @param request
      * @return
      * @throws IOException
      */
     @PostMapping("uploadFile")
     @ResponseBody
-    public String uploadFile(MultipartFile multipartFile, HttpServletRequest request) throws IOException {
-        if (multipartFile == null || multipartFile.isEmpty()) {
+    public String uploadFile(MultipartFile singleFile, HttpServletRequest request) throws IOException {
+        if (singleFile == null || singleFile.isEmpty()) {
             return "上传文件为空...";
         }
         //basePath拼接完成后，形如：http://192.168.1.20:8080/fileServer
         String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
-        String fileName = multipartFile.getOriginalFilename();
+        String fileName = singleFile.getOriginalFilename();
         String fileServerPath = basePath + resourceHandler.substring(0, resourceHandler.lastIndexOf("/") + 1) + fileName;
         System.out.println("文件访问路径：" + fileServerPath);
 
@@ -57,8 +57,8 @@ public class UploadFileController {
          * 文件保存，注意目的文件夹必须事先存在，否则保存时报错
          * 在{@link MyWebMvcConfigurer}中已经处理了，如果不存在，自动新建存储目录
          */
-        multipartFile.transferTo(saveFile);
+        singleFile.transferTo(saveFile);
         System.out.println("文件保存路径：" + saveFile.getPath());
-        return "<a href='" + fileServerPath + "'>" + fileServerPath + "</a>";
+        return "<a target='_blank' href='" + fileServerPath + "'>" + fileServerPath + "</a>";
     }
 }

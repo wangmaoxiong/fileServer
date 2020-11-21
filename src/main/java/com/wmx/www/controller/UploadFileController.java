@@ -1,5 +1,6 @@
 package com.wmx.www.controller;
 
+import com.wmx.www.config.MyWebMvcConfigurer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,7 +53,10 @@ public class UploadFileController {
         System.out.println("文件访问路径：" + fileServerPath);
 
         File saveFile = new File(uploadFileLocation, fileName);
-        //文件保存
+        /**
+         * 文件保存，注意目的文件夹必须事先存在，否则保存时报错
+         * 在{@link MyWebMvcConfigurer}中已经处理了，如果不存在，自动新建存储目录
+         */
         multipartFile.transferTo(saveFile);
         System.out.println("文件保存路径：" + saveFile.getPath());
         return "<a href='" + fileServerPath + "'>" + fileServerPath + "</a>";

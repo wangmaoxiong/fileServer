@@ -5,6 +5,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.annotation.PostConstruct;
+import java.io.File;
+
 /**
  * @author wangMaoXiong
  * Created by Administrator on 2019/3/17 0017.
@@ -25,6 +28,18 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
      */
     @Value("${uploadFile.location}")
     private String location;
+
+    /**
+     * 如果上传文件保存的本地目录不存在，则创建，否则后期保存文件时，容易出现找不到路径的错误
+     */
+    @PostConstruct
+    public void init() {
+        File file = new File(location);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        System.out.println(location + " 目录不存在，进行新建.");
+    }
 
     /**
      * 配置静态资源映射

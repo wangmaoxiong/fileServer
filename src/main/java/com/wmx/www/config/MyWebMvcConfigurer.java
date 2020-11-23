@@ -37,8 +37,10 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
         File file = new File(location);
         if (!file.exists()) {
             file.mkdirs();
+            System.out.println(location + " 目录不存在，进行新建.");
+        } else {
+            System.out.println(location + " 存储目录已经存在.");
         }
-        System.out.println(location + " 目录不存在，进行新建.");
     }
 
     /**

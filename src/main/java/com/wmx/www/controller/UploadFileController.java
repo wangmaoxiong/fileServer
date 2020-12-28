@@ -156,19 +156,26 @@ public class UploadFileController {
         OutputStream outputStream = null;
         try {
             logger.debug("文件下载：{}", id);
-
-            //设置返回类型，必须对文件名称进行编码，否则中午容易乱码
-            response.setContentType("application/octet-stream");
-            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(id, "UTF-8"));
-
-            //构建文件输入流。推荐使用：org.apache.commons.io.FileUtils.readFileToByteArray
             File saveFile = new File(uploadFileLocation, id);
-            byte[] byteArray = FileUtils.readFileToByteArray(saveFile);
+            if(saveFile.exists()){
+                //设置返回类型，必须对文件名称进行编码，否则中午容易乱码
+                response.setContentType("application/octet-stream");
+                response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(id, "UTF-8"));
 
-            //写入输出流返回给客户端
-            outputStream = new BufferedOutputStream(response.getOutputStream());
-            if (byteArray != null && byteArray.length > 0) {
-                outputStream.write(byteArray);
+                //构建文件输入流。推荐使用：org.apache.commons.io.FileUtils.readFileToByteArray
+                byte[] byteArray = FileUtils.readFileToByteArray(saveFile);
+
+                //写入输出流返回给客户端
+                outputStream = new BufferedOutputStream(response.getOutputStream());
+                if (byteArray != null && byteArray.length > 0) {
+                    outputStream.write(byteArray);
+                }
+            } else {
+                //设置头信息
+                response.setContentType("text/html;charset=utf-8");
+                PrintWriter writer = response.getWriter();
+                writer.write("【"+id + "】文件不存在！");
+                logger.warn("【{} 】文件不存在！", id);
             }
         } catch (IOException e) {
             e.printStackTrace();

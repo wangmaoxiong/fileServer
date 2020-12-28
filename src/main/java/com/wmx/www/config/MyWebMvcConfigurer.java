@@ -1,5 +1,7 @@
 package com.wmx.www.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -16,6 +18,8 @@ import java.io.File;
  */
 @Configuration
 public class MyWebMvcConfigurer implements WebMvcConfigurer {
+
+    private static final Logger logger = LoggerFactory.getLogger(MyWebMvcConfigurer.class);
 
     /**
      * 请求 url 中的资源映射，不推荐写死在代码中，最好提供可配置，如 /uploadFiles/**
@@ -37,9 +41,9 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
         File file = new File(location);
         if (!file.exists()) {
             file.mkdirs();
-            System.out.println(location + " 目录不存在，进行新建.");
+            logger.debug("服务器文件存在目录={}，已经不存在，进行新建。", location);
         } else {
-            System.out.println(location + " 存储目录已经存在.");
+            logger.debug("服务器存储目录已经存在={}", location);
         }
     }
 

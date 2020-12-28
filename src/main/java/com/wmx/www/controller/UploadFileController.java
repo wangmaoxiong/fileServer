@@ -59,7 +59,7 @@ public class UploadFileController {
         String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
         String fileName = singleFile.getOriginalFilename();
         String fileServerPath = basePath + resourceHandler.substring(0, resourceHandler.lastIndexOf("/") + 1) + fileName;
-        logger.info("文件访问路径：{}", fileServerPath);
+        logger.debug("文件访问路径：{}", fileServerPath);
 
         File saveFile = new File(uploadFileLocation, fileName);
         /**

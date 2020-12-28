@@ -100,19 +100,29 @@ public class UploadFileController {
 
     /**
      * 文件下载 · 使用 FileInputStream 读取文件内容
-     * http://192.168.3.127:9393/fileServer/fastdfs/download2?id=f41e995ba7454a9da1bcd975c7460fcd.png
+     * http://192.168.3.127:9393/fileServer/fastdfs/download1?id=f41e995ba7454a9da1bcd975c7460fcd.png
      *
      * @param response
      * @param id       ：文件名称，如 小白猫.png
      * @return
      * @throws IOException
      */
-    @RequestMapping(value = {"/fastdfs/download2"}, method = {RequestMethod.GET})
+    @RequestMapping(value = {"/fastdfs/download1"}, method = {RequestMethod.GET})
     public void download1(HttpServletResponse response, String id) {
         try {
             logger.debug("文件下载：{}", id);
             //构建文件输入流。推荐使用：org.apache.commons.io.FileUtils.readFileToByteArray
             File saveFile = new File(uploadFileLocation, id);
+            if (!saveFile.exists()) {
+                //设置头信息
+                response.setContentType("text/html;charset=utf-8");
+                PrintWriter writer = response.getWriter();
+                writer.write("【"+id + "】文件不存在！");
+                logger.warn("【{} 】文件不存在！", id);
+                writer.flush();
+                writer.close();
+                return;
+            }
             InputStream inputStream = new FileInputStream(saveFile);
             //设置返回类型，必须对文件名称进行编码，否则中午容易乱码
             response.setContentType("application/octet-stream");
@@ -135,13 +145,13 @@ public class UploadFileController {
 
     /**
      * 文件下载 · 使用 FileUtils.readFileToByteArray 读取文件内容
-     * http://192.168.3.127:9393/fileServer/fastdfs/download3?id=f41e995ba7454a9da1bcd975c7460fcd.png
+     * http://192.168.3.127:9393/fileServer/fastdfs/download2?id=f41e995ba7454a9da1bcd975c7460fcd.png
      *
      * @param response
      * @param id       ：文件名称，如 123.xtx
      * @return
      */
-    @RequestMapping(value = {"/fastdfs/download3"}, method = {RequestMethod.GET})
+    @RequestMapping(value = {"/fastdfs/download2"}, method = {RequestMethod.GET})
     public void download2(HttpServletResponse response, String id) {
         OutputStream outputStream = null;
         try {

@@ -43,22 +43,23 @@ public class UploadFileController {
     /**
      * 文件上传，因为只是演示，所以使用 @ResponseBody 将结果直接返回给页面
      *
-     * @param singleFile
-     * @param request
-     * @return
+     * @param singleFile ：上传的文件对象
+     * @param request    ：请求对象
+     * @return ：返回的是文件名称，将来客户端可以用来下载
      * @throws IOException
      */
     @PostMapping("fastdfs/uploadFile")
     @ResponseBody
     public String uploadFile(MultipartFile singleFile, HttpServletRequest request) throws IOException {
         if (singleFile == null || singleFile.isEmpty()) {
+            logger.debug("上传文件为空...");
             return "上传文件为空...";
         }
         //basePath拼接完成后，形如：http://192.168.1.20:8080/fileServer
         String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
         String fileName = singleFile.getOriginalFilename();
         String fileServerPath = basePath + resourceHandler.substring(0, resourceHandler.lastIndexOf("/") + 1) + fileName;
-        System.out.println("文件访问路径：" + fileServerPath);
+        logger.info("文件访问路径：{}", fileServerPath);
 
         File saveFile = new File(uploadFileLocation, fileName);
         /**
@@ -66,13 +67,13 @@ public class UploadFileController {
          * 在{@link MyWebMvcConfigurer}中已经处理了，如果不存在，自动新建存储目录
          */
         singleFile.transferTo(saveFile);
-        System.out.println("文件保存路径：" + saveFile.getPath());
+        logger.info("文件保存路径：{}", saveFile.getPath());
         return "<a target='_blank' href='" + fileServerPath + "'>" + fileServerPath + "</a>";
     }
 
     /**
      * 附件上传
-     * http://192.168.3.127:9393/fileServer/fastdfs/upload
+     * http://192.168.3.102:9393/fileServer/fastdfs/upload
      *
      * @param file   ：文件
      * @param region ：区划
@@ -82,15 +83,18 @@ public class UploadFileController {
     @PostMapping(value = "fastdfs/upload", produces = {"text/plain;charset=utf-8"})
     @ResponseBody
     public String uploadAffix(MultipartFile file, String region, HttpServletResponse response) throws IOException {
+        response.setContentType("text/plain; charset=utf-8");
+
         //允许所有域名的脚本访问该资源
         response.setHeader("Access-Control-Allow-Origin", "*");
         logger.info("fileName={},region={}", file.getName(), region);
+
         String fileName = file.getOriginalFilename().trim();
         String extName = fileName.substring(fileName.lastIndexOf("."));
         String id = UUID.randomUUID().toString().replace("-", "") + extName;
         File saveFile = new File(uploadFileLocation, id);
         file.transferTo(saveFile);
-        System.out.println("文件保存路径：" + saveFile.getPath());
+        logger.debug("文件上传保存路径：{}", saveFile.getPath());
         return id;
     }
 
@@ -98,17 +102,19 @@ public class UploadFileController {
      * http://192.168.3.127:9393/fileServer/fastdfs/download?id=f41e995ba7454a9da1bcd975c7460fcd.png
      *
      * @param response
-     * @param id
+     * @param id       ：{@link UploadFileController#uploadAffix(org.springframework.web.multipart.MultipartFile, java.lang.String, javax.servlet.http.HttpServletResponse)}
      * @return
      * @throws IOException
      */
     @RequestMapping(value = {"/fastdfs/download"}, method = {RequestMethod.GET}, produces = {"text/html;charset=utf-8"})
     public byte[] download(HttpServletResponse response, String id) throws IOException {
+        logger.debug("文件下载：{}", id);
+
         File saveFile = new File(uploadFileLocation, id);
         byte[] fileByte = FileUtils.readFileToByteArray(saveFile);
         String fileName = id;
         try {
-            OutputStream toClient = new BufferedOutputStream((OutputStream) response.getOutputStream());
+            OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
             response.setContentType("application/octet-stream");
             response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
             if (fileByte == null) {
@@ -120,6 +126,7 @@ public class UploadFileController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        logger.info("文件下载完成：{}", id);
         return fileByte;
     }
 
@@ -135,6 +142,7 @@ public class UploadFileController {
     @RequestMapping(value = {"/fastdfs/download2"}, method = {RequestMethod.GET})
     public void download2(HttpServletResponse response, String id) {
         try {
+            logger.debug("文件下载：{}", id);
             //构建文件输入流。推荐使用：org.apache.commons.io.FileUtils.readFileToByteArray
             File saveFile = new File(uploadFileLocation, id);
             InputStream inputStream = new FileInputStream(saveFile);
@@ -151,6 +159,7 @@ public class UploadFileController {
             }
             outputStream.flush();
             outputStream.close();
+            logger.info("文件下载完成：{}", id);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -168,6 +177,8 @@ public class UploadFileController {
     public void download3(HttpServletResponse response, String id) {
         OutputStream outputStream = null;
         try {
+            logger.debug("文件下载：{}", id);
+
             //设置返回类型，必须对文件名称进行编码，否则中午容易乱码
             response.setContentType("application/octet-stream");
             response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(id, "UTF-8"));
@@ -193,6 +204,7 @@ public class UploadFileController {
                 }
             }
         }
+        logger.info("文件下载完成：{}", id);
     }
 
 }

@@ -1,7 +1,9 @@
 package com.wmx.www.controller;
 
+import com.wmx.www.util.TinyidHelper;
 import com.xiaoju.uemc.tinyid.client.utils.TinyId;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -34,5 +36,21 @@ public class TinyidController {
         List<Long> longList = TinyId.nextId("test", 10);
         System.out.println("longList=" + longList);
         return longList.toString();
+    }
+
+    /**
+     * http://127.0.0.1:9393/fileServer/tinyid/randomTinyid?size=10
+     * 批量获取分布式id，且对 Tinyid 结果随机插入字母，防止被扫库
+     *
+     * @param size ：批量生成的个数
+     * @return
+     */
+    @GetMapping("tinyid/randomTinyid")
+    public List<String> randomTinyid(@RequestParam Integer size) {
+        size = size == null ? 10 : size < 0 ? 10 : size;
+        List<Long> longList = TinyId.nextId("test", size);
+        System.out.println("longList=" + longList);
+        List<String> randomTinyid = TinyidHelper.randomTinyid(longList);
+        return randomTinyid;
     }
 }

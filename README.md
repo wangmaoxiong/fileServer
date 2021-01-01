@@ -6,3 +6,5 @@
 3、uploadFile.location：配置上传文件服务器保存路径，默认为：E:/wmx/uploadFiles/
 
 4、项目启动后的访问地址：http://localhost:9393/fileServer/
+
+5、对滴滴分布式 ID 系统的客户端 SDK 练习
